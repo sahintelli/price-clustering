@@ -9,13 +9,23 @@ try:
 except ModuleNotFoundError:
     raise ImportError("The 'streamlit' module is not installed. Install it using 'pip install streamlit'.")
 
-# Sample Data Preparation (Replace this with your actual dataset)
-data = {
-    "Market": ["Market A", "Market B", "Market C"] * 50,
-    "CompanyCode": [f"C{i}" for i in range(1, 51)] * 3,
-    "Price": np.random.uniform(0, 100, 150),
-}
-df = pd.DataFrame(data)
+# Load real data from a publicly available source (example: Yahoo Finance)
+def load_real_data():
+    """Fetch real data for demonstration purposes."""
+    import yfinance as yf
+    
+    # Fetch historical data for a sample stock (e.g., AAPL)
+    ticker = "AAPL"
+    data = yf.download(ticker, period="1mo", interval="1d")
+    
+    # Prepare the DataFrame
+    data.reset_index(inplace=True)
+    data = data.rename(columns={"Adj Close": "Price"})
+    data["Market"] = "Stock Market"
+    data["CompanyCode"] = ticker
+    return data
+
+df = load_real_data()
 
 def plot_price_clustering(selected_market, company_code):
     """Filter data based on market and company code, then plot price clustering."""
