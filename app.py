@@ -1,7 +1,8 @@
 import streamlit as st
 import pandas as pd
-import matplotlib.pyplot as plt
 import numpy as np
+from mpl_interactions import interactive_plot
+import matplotlib.pyplot as plt
 
 # Ensure streamlit is available (to avoid ModuleNotFoundError)
 try:
@@ -27,8 +28,8 @@ def load_real_data():
 
 df = load_real_data()
 
-def plot_price_clustering(selected_market, company_code, bins):
-    """Filter data based on market and company code, then plot price clustering."""
+def plot_price_clustering_with_slider(selected_market, company_code):
+    """Filter data based on market and company code, then plot price clustering with an interactive slider."""
     filtered_data = df[(df["Market"] == selected_market)]
     if company_code:
         filtered_data = filtered_data[filtered_data["CompanyCode"] == company_code]
@@ -37,16 +38,17 @@ def plot_price_clustering(selected_market, company_code, bins):
         st.warning("No data available for the selected market and company code.")
         return
 
-    # Ensure `bins` is an integer
-    bins = int(bins)
+    # Define the interactive function for the histogram
+    def interactive_histogram(bins):
+        plt.figure(figsize=(10, 6))
+        plt.hist(filtered_data["Price"], bins=int(bins), color="skyblue", edgecolor="black")
+        plt.title(f"Price Clustering in {selected_market}" + (f" (Company: {company_code})" if company_code else ""))
+        plt.xlabel("Price")
+        plt.ylabel("Frequency")
+        plt.show()
 
-    # Create histogram for price clustering
-    plt.figure(figsize=(10, 6))
-    plt.hist(filtered_data["Price"], bins=bins, color="skyblue", edgecolor="black")
-    plt.title(f"Price Clustering in {selected_market}" + (f" (Company: {company_code})" if company_code else ""))
-    plt.xlabel("Price")
-    plt.ylabel("Frequency")
-    st.pyplot(plt)
+    # Create an interactive plot
+    interactive_plot(interactive_histogram, bins=(5, 50, 1))
 
 # Streamlit UI
 def main():
@@ -58,12 +60,9 @@ def main():
     # Company code input
     company_code = st.text_input("Enter Company Code (optional)")
 
-    # Number of bins slider
-    bins = st.slider("Select Number of Bins", min_value=5, max_value=50, value=20, step=1)
-
-    # Plot button
-    if st.button("Show Chart"):
-        plot_price_clustering(selected_market, company_code, bins)
+    # Interactive plot button
+    if st.button("Show Interactive Chart"):
+        plot_price_clustering_with_slider(selected_market, company_code)
 
 if __name__ == "__main__":
     main()
