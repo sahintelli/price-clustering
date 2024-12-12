@@ -8,23 +8,32 @@ import plotly.graph_objects as go
 # Generate some example data
 np.random.seed(42)
 x = np.linspace(0, 10, 100)
-y = np.sin(x) + np.random.normal(0, 0.1, size=x.shape)
 
 # Create the plotly figure
 fig = go.Figure()
 
-# Add scatter plot
-fig.add_trace(go.Scatter(x=x, y=y, mode='lines', name='Sine Wave'))
+# Add initial scatter plot
+fig.add_trace(go.Scatter(x=x, y=np.sin(x), mode='lines', name='Sine Wave'))
 
-# Add slider functionality to adjust the frequency of sine wave
+# Create steps for the slider to adjust the frequency of sine wave
+steps = []
+for i in np.linspace(1, 5, 10):
+    step = {
+        'label': f'{i:.1f}',  # Show frequency value on the slider
+        'method': 'relayout',
+        'args': [  # Dynamically update x and y data when slider is moved
+            {'x': [x], 'y': [np.sin(x * i)]},
+        ],
+    }
+    steps.append(step)
+
+# Add slider functionality
 fig.update_layout(
     sliders=[{
         'currentvalue': {'visible': True, 'prefix': 'Frequency: '},
-        'steps': [
-            {'label': f'{i}', 'method': 'relayout', 'args': [f'{"x": [{x}], "y": [{np.sin(x*i)]}'}']}
-            for i in np.linspace(1, 5, 10)
-        ],
-    }]
+        'steps': steps
+    }],
+    title='Interactive Sine Wave with Frequency Adjustment'
 )
 
 # Display the figure using Streamlit
