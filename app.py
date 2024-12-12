@@ -37,12 +37,8 @@ def plot_price_clustering(selected_market, company_code, bins):
         st.warning("No data available for the selected market and company code.")
         return
 
-    try:
-        # Ensure bins is an integer
-        bins = int(bins)
-    except ValueError:
-        st.error("The number of bins must be an integer.")
-        return
+    # Ensure `bins` is an integer
+    bins = int(bins)
 
     # Create histogram for price clustering
     plt.figure(figsize=(10, 6))
