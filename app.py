@@ -3,6 +3,29 @@ import pandas as pd
 import numpy as np
 from mpl_interactions import interactive_plot
 import matplotlib.pyplot as plt
+import plotly.graph_objects as go
+
+# Generate some example data
+np.random.seed(42)
+x = np.linspace(0, 10, 100)
+y = np.sin(x) + np.random.normal(0, 0.1, size=x.shape)
+
+# Create the plotly figure
+fig = go.Figure()
+
+# Add scatter plot
+fig.add_trace(go.Scatter(x=x, y=y, mode='lines', name='Sine Wave'))
+
+# Add slider functionality
+fig.update_layout(
+    sliders=[{
+        'currentvalue': {'visible': True, 'prefix': 'Number of bins: '}
+    }]
+)
+
+# Display the figure using Streamlit
+st.plotly_chart(fig)
+
 
 # Ensure streamlit is available (to avoid ModuleNotFoundError)
 try:
