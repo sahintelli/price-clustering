@@ -1,8 +1,8 @@
 import streamlit as st
 import pandas as pd
+import matplotlib.pyplot as plt
 import numpy as np
 from mpl_interactions import interactive_plot
-import matplotlib.pyplot as plt
 
 # Ensure streamlit is available (to avoid ModuleNotFoundError)
 try:
@@ -41,6 +41,7 @@ def plot_price_clustering_with_slider(selected_market, company_code):
     # Define the interactive function for the histogram
     def interactive_histogram(bins):
         plt.figure(figsize=(10, 6))
+        bins = int(bins)  # Ensure bins is an integer
         plt.hist(filtered_data["Price"], bins=bins, color="skyblue", edgecolor="black")
         plt.title(f"Price Clustering in {selected_market}" + (f" (Company: {company_code})" if company_code else ""))
         plt.xlabel("Price")
