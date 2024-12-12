@@ -16,10 +16,14 @@ fig = go.Figure()
 # Add scatter plot
 fig.add_trace(go.Scatter(x=x, y=y, mode='lines', name='Sine Wave'))
 
-# Add slider functionality
+# Add slider functionality to adjust the frequency of sine wave
 fig.update_layout(
     sliders=[{
-        'currentvalue': {'visible': True, 'prefix': 'Number of bins: '}
+        'currentvalue': {'visible': True, 'prefix': 'Frequency: '},
+        'steps': [
+            {'label': f'{i}', 'method': 'relayout', 'args': [f'{"x": [{x}], "y": [{np.sin(x*i)]}'}']}
+            for i in np.linspace(1, 5, 10)
+        ],
     }]
 )
 
