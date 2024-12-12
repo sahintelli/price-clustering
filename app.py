@@ -40,6 +40,7 @@ def plot_price_clustering_with_slider(selected_market, company_code):
 
     # Define the interactive function for the histogram
     def interactive_histogram(bins):
+        st.write(bins)
         plt.figure(figsize=(10, 6))
         plt.hist(filtered_data["Price"], bins=int(bins), color="skyblue", edgecolor="black")
         plt.title(f"Price Clustering in {selected_market}" + (f" (Company: {company_code})" if company_code else ""))
