@@ -27,7 +27,7 @@ def load_real_data():
 
 df = load_real_data()
 
-def plot_price_clustering(selected_market, company_code):
+def plot_price_clustering(selected_market, company_code, bins):
     """Filter data based on market and company code, then plot price clustering."""
     filtered_data = df[(df["Market"] == selected_market)]
     if company_code:
@@ -39,7 +39,7 @@ def plot_price_clustering(selected_market, company_code):
 
     # Create histogram for price clustering
     plt.figure(figsize=(10, 6))
-    plt.hist(filtered_data["Price"], bins=20, color="skyblue", edgecolor="black")
+    plt.hist(filtered_data["Price"], bins=bins, color="skyblue", edgecolor="black")
     plt.title(f"Price Clustering in {selected_market}" + (f" (Company: {company_code})" if company_code else ""))
     plt.xlabel("Price")
     plt.ylabel("Frequency")
@@ -55,9 +55,12 @@ def main():
     # Company code input
     company_code = st.text_input("Enter Company Code (optional)")
 
+    # Number of bins slider
+    bins = st.slider("Select Number of Bins", min_value=5, max_value=50, value=20, step=1)
+
     # Plot button
     if st.button("Show Chart"):
-        plot_price_clustering(selected_market, company_code)
+        plot_price_clustering(selected_market, company_code, bins)
 
 if __name__ == "__main__":
     main()
