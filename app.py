@@ -9,7 +9,7 @@ import plotly.graph_objects as go
 np.random.seed(42)
 x = np.linspace(0, 10, 100)
 
-# Create the plotly figure
+# Create the initial plotly figure
 fig = go.Figure()
 
 # Add initial scatter plot
@@ -20,20 +20,36 @@ steps = []
 for i in np.linspace(1, 5, 10):
     step = {
         'label': f'{i:.1f}',  # Show frequency value on the slider
-        'method': 'relayout',
-        'args': [  # Dynamically update x and y data when slider is moved
-            {'x': [x], 'y': [np.sin(x * i)]},
+        'method': 'update',  # Use 'update' method for dynamic updates
+        'args': [
+            {'y': [np.sin(x * i)]},  # Update the y-values based on frequency
+            {'title': f'Sine Wave with Frequency {i:.1f}'}  # Update the title dynamically
         ],
     }
     steps.append(step)
 
-# Add slider functionality
+# Add slider functionality and update layout with updatemenus
 fig.update_layout(
+    title='Interactive Sine Wave with Frequency Adjustment',
     sliders=[{
         'currentvalue': {'visible': True, 'prefix': 'Frequency: '},
         'steps': steps
     }],
-    title='Interactive Sine Wave with Frequency Adjustment'
+    updatemenus=[{
+        'buttons': [{
+            'args': [None, {'frame': {'duration': 500, 'redraw': True}, 'fromcurrent': True}],
+            'label': 'Play',
+            'method': 'animate',
+        }],
+        'direction': 'left',
+        'pad': {'r': 10, 't': 87},
+        'showactive': False,
+        'type': 'buttons',
+        'x': 0.1,
+        'xanchor': 'right',
+        'y': 0,
+        'yanchor': 'top',
+    }]
 )
 
 # Display the figure using Streamlit
