@@ -1,8 +1,14 @@
 import streamlit as st
 import pandas as pd
-import plotly.express as px
-import plotly.graph_objects as go
 import numpy as np
+from mpl_interactions import interactive_plot
+import matplotlib.pyplot as plt
+
+# Ensure streamlit is available (to avoid ModuleNotFoundError)
+try:
+    import streamlit as st
+except ModuleNotFoundError:
+    raise ImportError("The 'streamlit' module is not installed. Install it using 'pip install streamlit'.")
 
 # Load real data from a publicly available source (example: Yahoo Finance)
 def load_real_data():
@@ -22,8 +28,8 @@ def load_real_data():
 
 df = load_real_data()
 
-def plot_price_clustering_plotly(selected_market, company_code, bins):
-    """Filter data based on market and company code, then plot price clustering using Plotly."""
+def plot_price_clustering_with_slider(selected_market, company_code):
+    """Filter data based on market and company code, then plot price clustering with an interactive slider."""
     filtered_data = df[(df["Market"] == selected_market)]
     if company_code:
         filtered_data = filtered_data[filtered_data["CompanyCode"] == company_code]
@@ -32,24 +38,17 @@ def plot_price_clustering_plotly(selected_market, company_code, bins):
         st.warning("No data available for the selected market and company code.")
         return
 
-    # Create histogram with Plotly
-    fig = go.Figure()
-    fig.add_trace(
-        go.Histogram(
-            x=filtered_data["Price"],
-            nbinsx=bins,
-            marker_color="skyblue",
-            marker_line_color="black",
-            marker_line_width=1.5
-        )
-    )
-    fig.update_layout(
-        title=f"Price Clustering in {selected_market}" + (f" (Company: {company_code})" if company_code else ""),
-        xaxis_title="Price",
-        yaxis_title="Frequency",
-        bargap=0.1
-    )
-    st.plotly_chart(fig)
+    # Define the interactive function for the histogram
+    def interactive_histogram(bins):
+        plt.figure(figsize=(10, 6))
+        plt.hist(filtered_data["Price"], bins=bins, color="skyblue", edgecolor="black")
+        plt.title(f"Price Clustering in {selected_market}" + (f" (Company: {company_code})" if company_code else ""))
+        plt.xlabel("Price")
+        plt.ylabel("Frequency")
+        plt.show()
+
+    # Create an interactive plot
+    interactive_plot(interactive_histogram, bins=(5, 50, 1))
 
 # Streamlit UI
 def main():
@@ -61,12 +60,9 @@ def main():
     # Company code input
     company_code = st.text_input("Enter Company Code (optional)")
 
-    # Number of bins slider
-    bins = st.slider("Select Number of Bins", min_value=5, max_value=50, value=20, step=1)
-
-    # Plot button
-    if st.button("Show Chart"):
-        plot_price_clustering_plotly(selected_market, company_code, bins)
+    # Interactive plot button
+    if st.button("Show Interactive Chart"):
+        plot_price_clustering_with_slider(selected_market, company_code)
 
 if __name__ == "__main__":
     main()
